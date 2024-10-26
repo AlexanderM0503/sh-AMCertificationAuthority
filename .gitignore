@@ -1,2 +1,6 @@
 *.key
+*.csr
 *.crt
+*.cnf
+
+serialNumbers
