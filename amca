@@ -24,6 +24,8 @@ function print_help ()
 {
     echo "    -n [domain], --new [domain]       Создание сертификата для домена"
     echo "    -u [domain], --update [domain]    Переиздание сертификата для домена"
+    echo "    -l, --list                        Вывод списка доменов"
+    echo "    -s, --serial                      Вывод серийных номеров"
     echo "    -h, --help                        Вывод справки"
 }
 
@@ -148,6 +150,19 @@ do
         fi
 
         shift
+    ;;
+
+    -l | --list)
+        domains=./domains/
+        for domain in "$domains"*
+        do
+            size=${#domains}
+            echo "${domain:$size}"
+        done
+    ;;
+
+    -s | --serial)
+        cat serialNumbers
     ;;
 
     -h | --help | *)
