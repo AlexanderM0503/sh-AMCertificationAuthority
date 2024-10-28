@@ -20,7 +20,7 @@ if [ ! -d ./domains ]; then
     mkdir ./domains
 fi
 
-function print_help ()
+function print_help
 {
     echo "    -n [domain], --new [domain]       Создание сертификата для домена"
     echo "    -u [domain], --update [domain]    Переиздание сертификата для домена"
@@ -31,6 +31,32 @@ function print_help ()
     echo "    -s, --serial                      Вывод серийных номеров"
     echo "    -h, --help                        Вывод справки"
     exit
+}
+
+function create_cnf
+{
+    echo "[ req ]" >> ./domains/$1/ssl-csr.cnf
+    echo "default_bits = 4096" >> ./domains/$1/ssl-csr.cnf
+    echo "distinguished_name = req_distinguished_name" >> ./domains/$1/ssl-csr.cnf
+    echo "req_extensions = req_ext" >> ./domains/$1/ssl-csr.cnf
+    echo "" >> ./domains/$1/ssl-csr.cnf
+    echo "[ req_distinguished_name ]" >> ./domains/$1/ssl-csr.cnf
+    echo "countryName                  = Country Name (2 letter code)" >> ./domains/$1/ssl-csr.cnf
+    echo "countryName_default          = RU" >> ./domains/$1/ssl-csr.cnf
+    echo "stateOrProvinceName          = State or Province Name (full name)" >> ./domains/$1/ssl-csr.cnf
+    echo "stateOrProvinceName_default  = Russia" >> ./domains/$1/ssl-csr.cnf
+    echo "localityName                 = Locality Name (eg, city)" >> ./domains/$1/ssl-csr.cnf
+    echo "localityName_default         = Moscow" >> ./domains/$1/ssl-csr.cnf
+    echo "organizationName             = Organization Name (eg, company)" >> ./domains/$1/ssl-csr.cnf
+    echo "organizationName_default     = Company" >> ./domains/$1/ssl-csr.cnf
+    echo "commonName                   = Common Name (eg, YOUR name or FQDN)" >> ./domains/$1/ssl-csr.cnf
+    echo "commonName_max               = 64" >> ./domains/$1/ssl-csr.cnf
+    echo "" >> ./domains/$1/ssl-csr.cnf
+    echo "[ req_ext ]" >> ./domains/$1/ssl-csr.cnf
+    echo "basicConstraints = CA:FALSE" >> ./domains/$1/ssl-csr.cnf
+    echo "keyUsage = nonRepudiation, digitalSignature, keyEncipherment" >> ./domains/$1/ssl-csr.cnf
+    echo "" >> ./domains/$1/ssl-csr.cnf
+    echo "subjectAltName = DNS:$1" >> ./domains/$1/ssl-csr.cnf
 }
 
 if [ -z "$1" ]; then
@@ -56,28 +82,7 @@ do
                     if [ -e ./domains/$2/ssl-csr.cnf ]; then
                         rm ./domains/$2/ssl-csr.cnf
                     fi
-                    echo "[ req ]" >> ./domains/$2/ssl-csr.cnf
-                    echo "default_bits = 4096" >> ./domains/$2/ssl-csr.cnf
-                    echo "distinguished_name  = req_distinguished_name" >> ./domains/$2/ssl-csr.cnf
-                    echo "req_extensions     = req_ext" >> ./domains/$2/ssl-csr.cnf
-                    echo "" >> ./domains/$2/ssl-csr.cnf
-                    echo "[ req_distinguished_name ]" >> ./domains/$2/ssl-csr.cnf
-                    echo "countryName                  = Country Name (2 letter code)" >> ./domains/$2/ssl-csr.cnf
-                    echo "countryName_default          = RU" >> ./domains/$2/ssl-csr.cnf
-                    echo "stateOrProvinceName          = State or Province Name (full name)" >> ./domains/$2/ssl-csr.cnf
-                    echo "stateOrProvinceName_default  = Russia" >> ./domains/$2/ssl-csr.cnf
-                    echo "localityName                 = Locality Name (eg, city)" >> ./domains/$2/ssl-csr.cnf
-                    echo "localityName_default         = Moscow" >> ./domains/$2/ssl-csr.cnf
-                    echo "organizationName             = Organization Name (eg, company)" >> ./domains/$2/ssl-csr.cnf
-                    echo "organizationName_default     = Company" >> ./domains/$2/ssl-csr.cnf
-                    echo "commonName                   = Common Name (eg, YOUR name or FQDN)" >> ./domains/$2/ssl-csr.cnf
-                    echo "commonName_max               = 64" >> ./domains/$2/ssl-csr.cnf
-                    echo "" >> ./domains/$2/ssl-csr.cnf
-                    echo "[ req_ext ]" >> ./domains/$2/ssl-csr.cnf
-                    echo "basicConstraints = CA:FALSE" >> ./domains/$2/ssl-csr.cnf
-                    echo "keyUsage = nonRepudiation, digitalSignature, keyEncipherment" >> ./domains/$2/ssl-csr.cnf
-                    echo "" >> ./domains/$2/ssl-csr.cnf
-                    echo "subjectAltName          = DNS:$2" >> ./domains/$2/ssl-csr.cnf
+                    create_cnf $2
 
                     echo "Создание запроса подписи сертификата"
                     openssl req -new -key ./domains/$2/$2.key -config ./domains/$2/ssl-csr.cnf -reqexts req_ext -out ./domains/$2/$2.csr
@@ -110,28 +115,7 @@ do
                     if [ -e ./domains/$2/ssl-csr.cnf ]; then
                         rm ./domains/$2/ssl-csr.cnf
                     fi
-                    echo "[ req ]" >> ./domains/$2/ssl-csr.cnf
-                    echo "default_bits = 4096" >> ./domains/$2/ssl-csr.cnf
-                    echo "distinguished_name  = req_distinguished_name" >> ./domains/$2/ssl-csr.cnf
-                    echo "req_extensions     = req_ext" >> ./domains/$2/ssl-csr.cnf
-                    echo "" >> ./domains/$2/ssl-csr.cnf
-                    echo "[ req_distinguished_name ]" >> ./domains/$2/ssl-csr.cnf
-                    echo "countryName                  = Country Name (2 letter code)" >> ./domains/$2/ssl-csr.cnf
-                    echo "countryName_default          = RU" >> ./domains/$2/ssl-csr.cnf
-                    echo "stateOrProvinceName          = State or Province Name (full name)" >> ./domains/$2/ssl-csr.cnf
-                    echo "stateOrProvinceName_default  = Russia" >> ./domains/$2/ssl-csr.cnf
-                    echo "localityName                 = Locality Name (eg, city)" >> ./domains/$2/ssl-csr.cnf
-                    echo "localityName_default         = Moscow" >> ./domains/$2/ssl-csr.cnf
-                    echo "organizationName             = Organization Name (eg, company)" >> ./domains/$2/ssl-csr.cnf
-                    echo "organizationName_default     = Company" >> ./domains/$2/ssl-csr.cnf
-                    echo "commonName                   = Common Name (eg, YOUR name or FQDN)" >> ./domains/$2/ssl-csr.cnf
-                    echo "commonName_max               = 64" >> ./domains/$2/ssl-csr.cnf
-                    echo "" >> ./domains/$2/ssl-csr.cnf
-                    echo "[ req_ext ]" >> ./domains/$2/ssl-csr.cnf
-                    echo "basicConstraints = CA:FALSE" >> ./domains/$2/ssl-csr.cnf
-                    echo "keyUsage = nonRepudiation, digitalSignature, keyEncipherment" >> ./domains/$2/ssl-csr.cnf
-                    echo "" >> ./domains/$2/ssl-csr.cnf
-                    echo "subjectAltName          = DNS:$2" >> ./domains/$2/ssl-csr.cnf
+                    create_cnf $2
 
                     echo "Создание запроса подписи сертификата"
                     openssl req -new -key ./domains/$2/$2.key -config ./domains/$2/ssl-csr.cnf -reqexts req_ext -out ./domains/$2/$2.csr
