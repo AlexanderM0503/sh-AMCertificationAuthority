@@ -195,6 +195,7 @@ do
     ;;
 
     -l | --list)
+        echo "Список доменов:"
         domains=./domains/
         for domain in "$domains"*
         do
@@ -204,6 +205,7 @@ do
     ;;
 
     -s | --serial)
+        echo "Серийные номера:"
         cat serialNumbers
     ;;
 
